@@ -7,16 +7,16 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-public class ClientHandler implements Runnable{
+public class ClientHandler implements Runnable {
     final Socket socket;
-    final  Scanner scanner;
+    final Scanner scanner;
     String name;
     boolean isLoggedIn;
-    private  DataInputStream input;
+    private DataInputStream input;
     private DataOutputStream output;
 
 
-    public ClientHandler(Socket socket){
+    public ClientHandler(Socket socket) {
         this.socket = socket;
         scanner = new Scanner(System.in);
 //        this.name = name;
@@ -24,23 +24,36 @@ public class ClientHandler implements Runnable{
         try {
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
-        }catch (IOException ex){
-            log("ClientHandler:" + ex.getMessage());
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
+
     public void run() {
         String received;
-//        write(output,"Your name:" +  name);
-//name //name:msg
-        while (true){
+        while (true) {
             try {
                 received = input.readUTF();
-                if(received.equals(Constants.LOGOUT)){
+                if (received.equals(Constants.LOGOUT)) {
+                    for(int i =0 ;i<Server.listname.size();i++){
+                        if(Server.listname.get(i).equals(this.name)) {
+                            Server.listname.remove(i);
+                            break;
+                        }
+                    }
+
+                    Server.clients.remove(this);
                     this.isLoggedIn = false;
-//                    closeSocket();
-//                    closeStreams();
+                    for(int  i = 0 ;i<Server.getClient().size();i++){
+                        if(Server.getClient().get(i).isLoggedIn){
+                            for(int j =0;j<Server.listname.size();j++){
+                                write(Server.getClient().get(i).output,Server.listname.get(j));
+                            }
+                        }
+                    }
                     break;
                 }
+
                 forwardToClient(received);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -49,71 +62,76 @@ public class ClientHandler implements Runnable{
 //        closeStreams();
     }
 
-    private void forwardToClient(String received){
-        System.out.println(received);
+    private void forwardToClient(String received) {
 
         StringTokenizer tokenizer = new StringTokenizer(received, "#");
-        if(tokenizer.countTokens()==2) {
-
-            String recipient = tokenizer.nextToken().trim();
-            String message = tokenizer.nextToken().trim();
-            for (ClientHandler c : Multithread.Server.getClient()) {
-                if (c.isLoggedIn && c.name.equals(recipient)) {
-                    write(c.output, name + ": " + message);
-                    log(name + " -->" + recipient + ": " + message);
-                    break;
-                }
-            }
-        }
-        else{
-            this.name = received;
-            Multithread.Server.listname.add(this.name);
-            for(int i = 0; i< Multithread.Server.getClient().size(); i++){
-                if(Multithread.Server.getClient().get(i).isLoggedIn){
-                    for(int j = 0; j< Multithread.Server.listname.size(); j++){
-                        write(Multithread.Server.getClient().get(i).output, Multithread.Server.listname.get(j));
+        int index = Integer.parseInt(tokenizer.nextToken());
+        switch (index) {
+            case 1: { // client sent string type : "1#username" ->login/signup with username
+                this.name = tokenizer.nextToken();
+                Server.listname.add(this.name);
+                for (int i = 0; i < Server.getClient().size(); i++) {
+                    if (Server.getClient().get(i).isLoggedIn) {
+                        if (Server.getClient().get(i).name.equals(this.name)) {
+                            for (int j = 0; j < Server.listname.size() - 1; j++) {
+                                write(Server.getClient().get(i).output, Server.listname.get(j));
+                            }
+                        } else {
+                            write(Server.getClient().get(i).output, this.name);
+                        }
                     }
                 }
             }
+            break;
+            case 2: {// client sent string : "2#recipient#msg -> this client send msg to receiver
+                String recipient = tokenizer.nextToken().trim();
+                String message = tokenizer.nextToken().trim();
+                for (ClientHandler c : Multithread.Server.getClient()) {
+                    if (c.isLoggedIn && c.name.equals(recipient)) {
+                        write(c.output, message);
+                        System.out.println(name + " -->" + recipient + ": " + message);
+                        break;
+                    }
+                }
+            }
+            break;
+
         }
     }
 
-    private String read(){
+    //user
+    private String read() {
         String line = "";
         try {
             line = input.readUTF();
-        }catch (IOException e){
-            log("read: " + e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return line;
     }
 
-    private void write(DataOutputStream output, String message){
+    private void write(DataOutputStream output, String message) {
         try {
             output.writeUTF(message);
-        }catch (IOException ex){
-            log("write: " + ex.getMessage());
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
-    private void closeStreams(){
-        try {
-            this.input.close();
-            this.output.close();
-        }catch (IOException ex){
-            log("closeStreams: " + ex.getMessage());
-        }
-    }
-
-    private  void closeSocket(){
-        try {
-            socket.close();
-        }catch (IOException ex){
-            log("closeSocket: " + ex.getMessage());
-        }
-    }
-
-    private  void log(String msg){
-        System.out.println(msg);
-    }
+//    private void closeStreams() {
+//        try {
+//            this.input.close();
+//            this.output.close();
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+//    }
+//
+//    private void closeSocket() {
+//        try {
+//            socket.close();
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+//    }
 }
