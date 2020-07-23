@@ -35,8 +35,8 @@ public class ClientHandler implements Runnable {
             try {
                 received = input.readUTF();
                 if (received.equals(Constants.LOGOUT)) {
-                    for(int i =0 ;i<Server.listname.size();i++){
-                        if(Server.listname.get(i).equals(this.name)) {
+                    for (int i = 0; i < Server.listname.size(); i++) {
+                        if (Server.listname.get(i).equals(this.name)) {
                             Server.listname.remove(i);
                             break;
                         }
@@ -44,10 +44,10 @@ public class ClientHandler implements Runnable {
 
                     Server.clients.remove(this);
                     this.isLoggedIn = false;
-                    for(int  i = 0 ;i<Server.getClient().size();i++){
-                        if(Server.getClient().get(i).isLoggedIn){
-                            for(int j =0;j<Server.listname.size();j++){
-                                write(Server.getClient().get(i).output,Server.listname.get(j));
+                    for (int i = 0; i < Server.getClient().size(); i++) {
+                        if (Server.getClient().get(i).isLoggedIn) {
+                            for (int j = 0; j < Server.listname.size(); j++) {
+                                write(Server.getClient().get(i).output, Server.listname.get(j));
                             }
                         }
                     }
@@ -65,7 +65,10 @@ public class ClientHandler implements Runnable {
     private void forwardToClient(String received) {
 
         StringTokenizer tokenizer = new StringTokenizer(received, "#");
+        //System.out.println(tokenizer.toString());
+        String msg = received.substring(received.indexOf("#") + 1, received.length());
         int index = Integer.parseInt(tokenizer.nextToken());
+        System.out.println(index);
         switch (index) {
             case 1: { // client sent string type : "1#username" ->login/signup with username
                 this.name = tokenizer.nextToken();
@@ -86,9 +89,11 @@ public class ClientHandler implements Runnable {
             case 2: {// client sent string : "2#recipient#msg -> this client send msg to receiver
                 String recipient = tokenizer.nextToken().trim();
                 String message = tokenizer.nextToken().trim();
+                System.out.println(received);
+                System.out.println(message);
                 for (ClientHandler c : Multithread.Server.getClient()) {
                     if (c.isLoggedIn && c.name.equals(recipient)) {
-                        write(c.output, message);
+                        write(c.output, msg );
                         System.out.println(name + " -->" + recipient + ": " + message);
                         break;
                     }
