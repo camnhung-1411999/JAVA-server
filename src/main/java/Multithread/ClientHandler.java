@@ -33,26 +33,6 @@ public class ClientHandler implements Runnable {
         while (true) {
             try {
                 received = input.readUTF();
-                if (received.equals(Constants.LOGOUT)) {
-                    for (int i = 0; i < Server.listname.size(); i++) {
-                        if (Server.listname.get(i).equals(this.name)) {
-                            Server.listname.remove(i);
-                            break;
-                        }
-                    }
-
-                    Server.clients.remove(this);
-                    this.isLoggedIn = false;
-                    for (int i = 0; i < Server.getClient().size(); i++) {
-                        if (Server.getClient().get(i).isLoggedIn) {
-                            for (int j = 0; j < Server.listname.size(); j++) {
-                                write(Server.getClient().get(i).output, Server.listname.get(j));
-                            }
-                        }
-                    }
-                    break;
-                }
-
                 forwardToClient(received);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -110,6 +90,26 @@ public class ClientHandler implements Runnable {
                 }
             }
             break;
+            case 3:{//logout :  4#nameLogout
+                String nameLogout = tokenizer.nextToken();
+                for (int i = 0; i < Server.listname.size(); i++) {
+                    if (Server.listname.get(i).equals(this.name)) {
+                        Server.listname.remove(i);
+                        break;
+                    }
+                }
+                for(int i = 0 ;i<Server.clients.size();i++){
+                    if(Server.clients.get(i).name.equals(nameLogout)){
+                        Server.clients.remove(i);
+                        break;
+                    }
+                }
+                for (int i = 0; i < Server.getClient().size(); i++) {
+                    if (Server.getClient().get(i).isLoggedIn) {
+                        write(Server.getClient().get(i).output, "logout#" +nameLogout);
+                    }
+                }
+            }
 
         }
     }
