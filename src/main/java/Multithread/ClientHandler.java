@@ -15,7 +15,6 @@ public class ClientHandler implements Runnable {
     private DataInputStream input;
     private DataOutputStream output;
 
-
     public ClientHandler(Socket socket) {
         this.socket = socket;
         scanner = new Scanner(System.in);
@@ -33,12 +32,33 @@ public class ClientHandler implements Runnable {
         while (true) {
             try {
                 received = input.readUTF();
+<<<<<<<Updated upstream
+=======
+                System.out.println(received);
+                if (received.equals(Constants.LOGOUT)) {
+                    for (int i = 0; i < Server.listname.size(); i++) {
+                        if (Server.listname.get(i).equals(this.name)) {
+                            Server.listname.remove(i);
+                            break;
+                        }
+                    }
+                    Server.clients.remove(this);
+                    this.isLoggedIn = false;
+                    for (int i = 0; i < Server.getClient().size(); i++) {
+                        if (Server.getClient().get(i).isLoggedIn) {
+                            for (int j = 0; j < Server.listname.size(); j++) {
+                                write(Server.getClient().get(i).output, Server.listname.get(j));
+                            }
+                        }
+                    }
+                    break;
+                }
+>>>>>>>Stashed changes
                 forwardToClient(received);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-//        closeStreams();
     }
 
     private void forwardToClient(String received) {
@@ -61,8 +81,8 @@ public class ClientHandler implements Runnable {
                         }
                     }
                 }
+                break;
             }
-            break;
             case 2: {// client sent string : "2#recipient#msg -> this client send msg to receiver
                 String recipient = tokenizer.nextToken().trim();
                 String message = tokenizer.nextToken().trim();
@@ -88,9 +108,9 @@ public class ClientHandler implements Runnable {
                         }
                     }
                 }
+                break;
             }
-            break;
-            case 3:{//logout :  4#nameLogout
+            case 4: {//logout :  4#nameLogout
                 String nameLogout = tokenizer.nextToken();
                 for (int i = 0; i < Server.listname.size(); i++) {
                     if (Server.listname.get(i).equals(this.name)) {
@@ -98,31 +118,50 @@ public class ClientHandler implements Runnable {
                         break;
                     }
                 }
-                for(int i = 0 ;i<Server.clients.size();i++){
-                    if(Server.clients.get(i).name.equals(nameLogout)){
+                for (int i = 0; i < Server.clients.size(); i++) {
+                    if (Server.clients.get(i).name.equals(nameLogout)) {
                         Server.clients.remove(i);
                         break;
                     }
                 }
                 for (int i = 0; i < Server.getClient().size(); i++) {
                     if (Server.getClient().get(i).isLoggedIn) {
-                        write(Server.getClient().get(i).output, "logout#" +nameLogout);
+                        write(Server.getClient().get(i).output, "logout#" + nameLogout);
                     }
                 }
             }
+            case 3: {
+                String recipient = tokenizer.nextToken().trim();
+                String message = tokenizer.nextToken().trim();
+                String[] ex = msg.split("#");/// mesage có cấu trúc là (người gửi)#(list người nhận)#(tin nhắn)#filesize: trường hợp dành cho chatlist
 
-        }
-    }
+                if (ex.length >= 3) {
+                    byte bytes[] = new byte[Integer.parseInt(ex[ex.length - 1])];
+                    boolean flag = true;
+                    for (ClientHandler c : Multithread.Server.getClient()) {
+                        for (int i = 0; i < ex.length - 1; i++) {
+                            if (c.isLoggedIn && c.name.equals(ex[i])) {
+                                write(c.output, "3File3#" + name + "#" + msg);
 
-    //user
-    private String read() {
-        String line = "";
-        try {
-            line = input.readUTF();
-        } catch (IOException e) {
-            e.printStackTrace();
+                                try {
+                                    if (flag) {
+                                        input.read(bytes, 0, bytes.length);
+                                        flag = !flag;
+                                    }
+                                    c.output.write(bytes, 0, bytes.length);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                System.out.println(name + " -->" + recipient + ": " + message);
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+
+            }
         }
-        return line;
     }
 
     private void write(DataOutputStream output, String message) {
