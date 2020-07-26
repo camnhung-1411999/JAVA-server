@@ -122,7 +122,7 @@ public class ClientHandler implements Runnable {
                                 try {
                                     if (flag) {
                                         input.read(bytes, 0, bytes.length);
-                                        flag = !flag;
+                                        flag = false;
                                     }
                                     c.output.write(bytes, 0, bytes.length);
                                 } catch (IOException e) {
@@ -133,27 +133,38 @@ public class ClientHandler implements Runnable {
                             }
                         }
                     }
+                    bytes = null;
                 }
                 break;
 
             }
             case 4: {//logout :  4#nameLogout
-                String nameLogout = tokenizer.nextToken();
-                for (int i = 0; i < Server.listname.size(); i++) {
-                    if (Server.listname.get(i).equals(this.name)) {
-                        Server.listname.remove(i);
-                        break;
+
+                String[] ex = msg.split("#");
+                if (ex.length > 1) {
+                    for (int i = 0; i < Server.getClient().size(); i++) {
+                        if (Server.getClient().get(i).isLoggedIn) {
+                            write(Server.getClient().get(i).output, "logout#" + msg);
+                        }
                     }
-                }
-                for (int i = 0; i < Server.clients.size(); i++) {
-                    if (Server.clients.get(i).name.equals(nameLogout)) {
-                        Server.clients.remove(i);
-                        break;
+                } else {
+                    String nameLogout = tokenizer.nextToken();
+                    for (int i = 0; i < Server.listname.size(); i++) {
+                        if (Server.listname.get(i).equals(this.name)) {
+                            Server.listname.remove(i);
+                            break;
+                        }
                     }
-                }
-                for (int i = 0; i < Server.getClient().size(); i++) {
-                    if (Server.getClient().get(i).isLoggedIn) {
-                        write(Server.getClient().get(i).output, "logout#" + nameLogout);
+                    for (int i = 0; i < Server.clients.size(); i++) {
+                        if (Server.clients.get(i).name.equals(nameLogout)) {
+                            Server.clients.remove(i);
+                            break;
+                        }
+                    }
+                    for (int i = 0; i < Server.getClient().size(); i++) {
+                        if (Server.getClient().get(i).isLoggedIn) {
+                            write(Server.getClient().get(i).output, "logout#" + nameLogout);
+                        }
                     }
                 }
             }

@@ -1,19 +1,20 @@
 
-Z	java:S106]"9Replace this use of System.out or System.err by a logger.(Â­ÿøÿÿÿÿ8ë‚­¦¸.
+t
+java:S3776<"RRefactor this method to reduce its Cognitive Complexity from 82 to the 15 allowed.(ñ¾´×ıÿÿÿÿ8²¬§Ï¸.
 I
-java:S1199C"-Extract this nested code block into a method.(ïÿ”o8ë‚­¦¸.
-U	java:S106#"9Replace this use of System.out or System.err by a logger.(•íÏİ8Öë‹¨¸.
+java:S1199B"-Extract this nested code block into a method.(ïÿ”o8²¬§Ï¸.
 U
-java:S1197t"8Move the array designator from the variable to the type.(èùæ8ßèÌ·¸.
-C	java:S131B""Add a default case to this switch.(øãş•ÿÿÿÿÿ8ë‚­¦¸.
-v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(íÍµş8ë‚­¦¸.
-O
-java:S1199S"-Extract this nested code block into a method.(€¼ÔÌùÿÿÿÿ8ë‚­¦¸.
+java:S1197s"8Move the array designator from the variable to the type.(èùæ8ßèÌ·¸.
 o
 java:S3776"RRefactor this method to reduce its Cognitive Complexity from 24 to the 15 allowed.(“–ış8ë‚­¦¸.
-Z	java:S106g"9Replace this use of System.out or System.err by a logger.(Â­ÿøÿÿÿÿ8ë‚­¦¸.
-t
-java:S3776="RRefactor this method to reduce its Cognitive Complexity from 67 to the 15 allowed.(ñ¾´×ıÿÿÿÿ8ë‚­¦¸.
+C	java:S131A""Add a default case to this switch.(øãş•ÿÿÿÿÿ8²¬§Ï¸.
 O
-java:S1199n"-Extract this nested code block into a method.(úÀôãùÿÿÿÿ8ø¥¯¦¸.
-[	java:S106„"9Replace this use of System.out or System.err by a logger.(Â­ÿøÿÿÿÿ8­‹›§¸.
+java:S1199R"-Extract this nested code block into a method.(€¼ÔÌùÿÿÿÿ8²¬§Ï¸.
+P
+java:S1199Œ"-Extract this nested code block into a method.(ı¾ç’úÿÿÿÿ8‚¨Ï¸.
+v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(íÍµş8ë‚­¦¸.
+Z	java:S106f"9Replace this use of System.out or System.err by a logger.(Â­ÿøÿÿÿÿ8²¬§Ï¸.
+O
+java:S1199m"-Extract this nested code block into a method.(úÀôãùÿÿÿÿ8²¬§Ï¸.
+Z	java:S106\"9Replace this use of System.out or System.err by a logger.(Â­ÿøÿÿÿÿ8²¬§Ï¸.
+[	java:S106ƒ"9Replace this use of System.out or System.err by a logger.(Â­ÿøÿÿÿÿ8­‹›§¸.
