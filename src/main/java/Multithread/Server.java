@@ -22,7 +22,6 @@ public class Server {
         }
     }
 
-
     private void waitConnection(){
         log("Server running....");
         while (true){
@@ -40,6 +39,7 @@ public class Server {
             thread.start();
         }
     }
+
     public static List<ClientHandler> getClient(){
         return clients;
     }
@@ -47,6 +47,7 @@ public class Server {
     private void addClient(ClientHandler client){
         clients.add(client);
     }
+
     private  void log(String message){
         System.out.println(message);
     }

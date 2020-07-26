@@ -32,9 +32,6 @@ public class ClientHandler implements Runnable {
         while (true) {
             try {
                 received = input.readUTF();
-<<<<<<<Updated upstream
-=======
-                System.out.println(received);
                 if (received.equals(Constants.LOGOUT)) {
                     for (int i = 0; i < Server.listname.size(); i++) {
                         if (Server.listname.get(i).equals(this.name)) {
@@ -53,7 +50,6 @@ public class ClientHandler implements Runnable {
                     }
                     break;
                 }
->>>>>>>Stashed changes
                 forwardToClient(received);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -110,26 +106,6 @@ public class ClientHandler implements Runnable {
                 }
                 break;
             }
-            case 4: {//logout :  4#nameLogout
-                String nameLogout = tokenizer.nextToken();
-                for (int i = 0; i < Server.listname.size(); i++) {
-                    if (Server.listname.get(i).equals(this.name)) {
-                        Server.listname.remove(i);
-                        break;
-                    }
-                }
-                for (int i = 0; i < Server.clients.size(); i++) {
-                    if (Server.clients.get(i).name.equals(nameLogout)) {
-                        Server.clients.remove(i);
-                        break;
-                    }
-                }
-                for (int i = 0; i < Server.getClient().size(); i++) {
-                    if (Server.getClient().get(i).isLoggedIn) {
-                        write(Server.getClient().get(i).output, "logout#" + nameLogout);
-                    }
-                }
-            }
             case 3: {
                 String recipient = tokenizer.nextToken().trim();
                 String message = tokenizer.nextToken().trim();
@@ -160,6 +136,26 @@ public class ClientHandler implements Runnable {
                 }
                 break;
 
+            }
+            case 4: {//logout :  4#nameLogout
+                String nameLogout = tokenizer.nextToken();
+                for (int i = 0; i < Server.listname.size(); i++) {
+                    if (Server.listname.get(i).equals(this.name)) {
+                        Server.listname.remove(i);
+                        break;
+                    }
+                }
+                for (int i = 0; i < Server.clients.size(); i++) {
+                    if (Server.clients.get(i).name.equals(nameLogout)) {
+                        Server.clients.remove(i);
+                        break;
+                    }
+                }
+                for (int i = 0; i < Server.getClient().size(); i++) {
+                    if (Server.getClient().get(i).isLoggedIn) {
+                        write(Server.getClient().get(i).output, "logout#" + nameLogout);
+                    }
+                }
             }
         }
     }
